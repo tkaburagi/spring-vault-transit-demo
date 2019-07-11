@@ -20,12 +20,9 @@ public class VaultDemoAppController {
 
     @Autowired
     VaultTemplate vaultTemplate;
-
-    ObjectMapper mapper = new ObjectMapper();
-    User u = new User();
-
+    private final ObjectMapper mapper = new ObjectMapper();
+    private User u = new User();
     private final UserJpaRepository userJpaRepository;
-
 
     public VaultDemoAppController(UserJpaRepository userJpaRepository) {
         this.userJpaRepository = userJpaRepository;
