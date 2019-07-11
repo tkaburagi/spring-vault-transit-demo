@@ -1,0 +1,6 @@
+applications:
+- name: vault-demoapp-kabuctl
+  path: target/demo-0.0.1-SNAPSHOT.jar
+  memory: 768m
+  env:
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 12.+}}'
