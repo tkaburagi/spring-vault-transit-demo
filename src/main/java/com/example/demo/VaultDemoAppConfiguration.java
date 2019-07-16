@@ -21,10 +21,13 @@ class VaultDemoAppConfiguration extends AbstractVaultConfiguration {
     @Value("${APPROLE}")
     private String approle;
 
+    @Value("${VAULT_PORT}")
+    private int vault_port;
 
     @Override
     public VaultEndpoint vaultEndpoint() {
-        VaultEndpoint endpoint = VaultEndpoint.create(vault_host, 443);
+        VaultEndpoint endpoint = VaultEndpoint.create(vault_host, vault_port);
+        endpoint.setScheme("http");
         return  endpoint;
     }
 
@@ -38,8 +41,9 @@ class VaultDemoAppConfiguration extends AbstractVaultConfiguration {
                 .secretId(AppRoleAuthenticationOptions.SecretId.pull(initialToken))
                 .build();
 
+
         return new AppRoleAuthentication(options, restOperations());
     }
 
-    // …
+
 }

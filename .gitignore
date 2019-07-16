@@ -31,3 +31,4 @@ build/
 .vscode/
 
 set-env.sh
+my-set-env-local.sh
