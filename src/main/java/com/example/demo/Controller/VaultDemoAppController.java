@@ -88,7 +88,7 @@ public class VaultDemoAppController {
         return userJpaRepository.save(u);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/api/v1/plain/get-user")
+    @RequestMapping(method = RequestMethod.GET, value = "/api/v1/non-decrypt/get-user")
     public Object getOneUser (@RequestParam String uuid) throws Exception {
         User u = userJpaRepository.getOne(uuid);
         String json = mapper.writeValueAsString(u);
@@ -101,9 +101,16 @@ public class VaultDemoAppController {
         u = userJpaRepository.getOne(uuid);
         u.setPassword(vaultTransitConverter.decryptData(u.getPassword()));
         u.setCreditcard(vaultTransitConverter.decryptData(u.getCreditcard()));
-
         return u;
+    }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/api/v1/rewrap")
+    public Object rewrapOneDecryptedUser (@RequestParam String uuid) {
+        VaultTransitConverter vaultTransitConverter = new VaultTransitConverter();
+        u = userJpaRepository.getOne(uuid);
+        u.setPassword(vaultTransitConverter.rewrapData(u.getPassword()));
+        u.setCreditcard(vaultTransitConverter.rewrapData(u.getCreditcard()));
+        return u;
     }
 
 }

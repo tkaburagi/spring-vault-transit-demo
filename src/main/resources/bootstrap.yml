@@ -1,4 +1,8 @@
 spring.cloud.vault:
+#  authentication: approle
+#  app-role:
+#      role-id:
+#      secret-id:
   token: ${VAULT_TOKEN}
   scheme: http
   host: ${VAULT_HOST}
@@ -7,5 +11,3 @@ spring.cloud.vault:
     enabled: true
     role: role-demoapp
     backend: database
-
-

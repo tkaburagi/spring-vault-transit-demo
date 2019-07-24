@@ -25,6 +25,10 @@ public class VaultTransitConverter {
         return plaintext;
     }
 
-
+    public String rewrapData(String ctext) {
+        Ciphertext cipherext = Ciphertext.of(ctext);
+        String rewrappedtext = vaultOps.opsForTransit().rewrap("springdemo", cipherext.getCiphertext());
+        return rewrappedtext;
+    }
 
 }
