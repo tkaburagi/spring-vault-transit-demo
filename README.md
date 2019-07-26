@@ -62,7 +62,7 @@ Write a role.
 ```shell
 vault write database/roles/role-demoapp \
   db_name=mysql-handson-db \
-  creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT,INSERT ON handson.users TO '{{name}}'@'%';" \
+  creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT,INSERT,UPDATE ON handson.users TO '{{name}}'@'%';" \
   default_ttl="5h" \
   max_ttl="5h"
 ```
