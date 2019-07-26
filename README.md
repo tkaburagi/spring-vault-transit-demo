@@ -152,7 +152,7 @@ You can get encrypted data.
 Next, Let's get the data from MySQL. At first try to get data without using Vault. `non-decrypte` endpoint. This is just select the data from Database.
 
 ```shell
-curl -G "http://localhost:8080/api/v1/non-decrypt/get-use" -d uuid=db0bbb62-fdfd-4e2e-a4db-1e5e32e36761 | jq
+curl -G "http://localhost:8080/api/v1/non-decrypt/get-user" -d uuid=db0bbb62-fdfd-4e2e-a4db-1e5e32e36761 | jq
 ```
 
 Ofcourse, data is not decrypted and this data is not valuable for application.

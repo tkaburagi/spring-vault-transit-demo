@@ -1,13 +1,14 @@
 package com.example.demo.Controller;
 
+import com.example.demo.BeanUtil;
 import com.example.demo.Entity.User;
 import com.example.demo.Repository.UserJpaRepository;
 import com.example.demo.Entity.Secrets;
-import com.example.demo.VaultTransitConverter;
+import com.example.demo.VaultTransitUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.vault.core.VaultTemplate;
-import org.springframework.vault.support.VaultResponseSupport;
+import org.springframework.vault.support.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ public class VaultDemoAppController {
 
     @Autowired
     VaultTemplate vaultTemplate;
+
     private final ObjectMapper mapper = new ObjectMapper();
     private User u = new User();
     private final UserJpaRepository userJpaRepository;
@@ -46,12 +48,12 @@ public class VaultDemoAppController {
 
     @RequestMapping(value = "/api/v1/transit/encrypt", method = RequestMethod.GET)
     String transitEncrypt(@RequestParam String ptext){
-        return new VaultTransitConverter().encryptData(ptext);
+        return new VaultTransitUtil().encryptData(ptext);
     }
 
     @RequestMapping(value = "/api/v1/transit/decrypt", method = RequestMethod.GET)
     String transitDecrypt(@RequestParam String ctext){
-        return new VaultTransitConverter().decryptData(ctext);
+        return new VaultTransitUtil().decryptData(ctext);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/v1/get-all-users")
@@ -74,14 +76,14 @@ public class VaultDemoAppController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/api/v1/encrypt/add-user")
     public Object addOneEncryptedUser(@RequestParam String username, String password, String email, String address, String creditcard)  {
-        VaultTransitConverter vaultTransitConverter = new VaultTransitConverter();
+        VaultTransitUtil vaultTransitUtil = new VaultTransitUtil();
 
         u.setId(UUID.randomUUID().toString());
         u.setUsername(username);
-        u.setPassword(vaultTransitConverter.encryptData(password));
+        u.setPassword(vaultTransitUtil.encryptData(password));
         u.setEmail(email);
         u.setAddress(address);
-        u.setCreditcard(vaultTransitConverter.encryptData(creditcard));
+        u.setCreditcard(vaultTransitUtil.encryptData(creditcard));
 
         System.out.println(u.getPassword());
 
@@ -97,20 +99,31 @@ public class VaultDemoAppController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/v1/decrypt/get-user")
     public Object getOneDecryptedUser (@RequestParam String uuid) {
-        VaultTransitConverter vaultTransitConverter = new VaultTransitConverter();
+        VaultTransitUtil vaultTransitUtil = new VaultTransitUtil();
         u = userJpaRepository.getOne(uuid);
-        u.setPassword(vaultTransitConverter.decryptData(u.getPassword()));
-        u.setCreditcard(vaultTransitConverter.decryptData(u.getCreditcard()));
+        u.setPassword(vaultTransitUtil.decryptData(u.getPassword()));
+        u.setCreditcard(vaultTransitUtil.decryptData(u.getCreditcard()));
         return u;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/v1/rewrap")
     public Object rewrapOneDecryptedUser (@RequestParam String uuid) {
-        VaultTransitConverter vaultTransitConverter = new VaultTransitConverter();
+        VaultTransitUtil vaultTransitUtil = new VaultTransitUtil();
         u = userJpaRepository.getOne(uuid);
-        u.setPassword(vaultTransitConverter.rewrapData(u.getPassword()));
-        u.setCreditcard(vaultTransitConverter.rewrapData(u.getCreditcard()));
+        u.setId(u.getId());
+        u.setPassword(vaultTransitUtil.rewrapData(u.getPassword()));
+        u.setCreditcard(vaultTransitUtil.rewrapData(u.getCreditcard()));
+
+        userJpaRepository.save(u);
+
         return u;
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "api/v1/get-keys")
+    public Object getKeys() {
+        VaultTransitUtil vaultTransitUtil = new VaultTransitUtil();
+        return vaultTransitUtil.getKeyStatus();
+    }
+
 
 }
