@@ -189,8 +189,9 @@ You can see decrypted data by Vault.
 
 Lastly, let's rotate the key. Firstly confirm the current key version.
 
-```console
+```shell
 curl -G http://localhost:8080/api/v1/get-keys | jq
+
 {
   "name": [
     "springdemo"
@@ -198,6 +199,7 @@ curl -G http://localhost:8080/api/v1/get-keys | jq
   "type": "aes256-gcm96",
   "latest_version": 1,
   "min_decrypt_version": 1
+}
 ```
 
 ```shell
@@ -206,8 +208,9 @@ vault write -f transit/keys/springdemo/rotate
 
 Make sure the latest_version is bumped up.
 
-```console
+```shell
 curl -G http://localhost:8080/api/v1/get-keys | jq
+
 {
   "name": [
     "springdemo"
@@ -215,12 +218,14 @@ curl -G http://localhost:8080/api/v1/get-keys | jq
   "type": "aes256-gcm96",
   "latest_version": 2,
   "min_decrypt_version": 1
+}
 ```
 
 But the data is still v1. Please see the details on a Transit document.
 
-```console
-$ mysql> select * from users;
+```shell
+mysql> select * from users;
+
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
 | id                                   | username        | password                                                  | email             | address  | creditcard                                                                |
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
@@ -232,16 +237,17 @@ New data will be encrypted by a v2 key but Vault can rewrap the exisiting data.
 
 Put the new data. 
 
-```console
-$ curl http://localhost:8080/api/v1/encrypt/add-user -d username="Yusuke Kaburagi" -d password="PqssWOrd" -d address="Tokyo" --data-urlencode creditcard="9999-8888-6666-6666" --data-urlencode email="yusuke@locahost"
+```shell
+curl http://localhost:8080/api/v1/encrypt/add-user -d username="Yusuke Kaburagi" -d password="PqssWOrd" -d address="Tokyo" --data-urlencode creditcard="9999-8888-6666-6666" --data-urlencode email="yusuke@locahost"
 
 {"id":"543ab906-af99-4856-a8fd-5e958bc5cd67","username":"Yusuke Kaburagi","password":"vault:v2:A+eN+mmLV8QHGEXxxgX4c+kmP9SsE1C8onDucTfLAOtzx+nR","email":"yusuke@locahost","address":"Tokyo","creditcard":"vault:v2:bir3zuy1jejEPr3Fh3mFc1HIZ6lnlu2s/VtCSMAXkMH6cAjJHgqVY96lcBGjAgc="}
 ```
 
 Check the inside database.
 
-```console
+```shell
 mysql> select * from users;
+
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
 | id                                   | username        | password                                                  | email             | address  | creditcard                                                                |
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
@@ -258,8 +264,9 @@ curl -G http://localhost:8080/api/v1/rewrap -d uuid=1cb11eb9-4802-4bfb-92a6-86d3
 
 Check the inside database.
 
-```console
+```shell
 mysql> select * from users;
+
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
 | id                                   | username        | password                                                  | email             | address  | creditcard                                                                |
 +--------------------------------------+-----------------+-----------------------------------------------------------+-------------------+----------+---------------------------------------------------------------------------+
@@ -272,8 +279,9 @@ You can make sure the data is updated usign new encrypted key. This data cannot 
 
 Let's see the data from applications api again.
 
-```console 
+```shell 
 curl -G http://localhost:8080/api/v1/non-decrypt/get-user -d uuid=1cb11eb9-4802-4bfb-92a6-86d329ceebf8 | jq
+
 {
   "id": "1cb11eb9-4802-4bfb-92a6-86d329ceebf8",
   "username": "Hiroki Kaburagi",
@@ -286,8 +294,9 @@ curl -G http://localhost:8080/api/v1/non-decrypt/get-user -d uuid=1cb11eb9-4802-
 
 Also see the decrypted data by the v2 key. Application totally does not need to take care the versioning Vault API realize it at all.
 
-```conosole
- curl -G http://localhost:8080/api/v1/decrypt/get-user -d uuid=1cb11eb9-4802-4bfb-92a6-86d329ceebf8 | jq
+```shell
+curl -G http://localhost:8080/api/v1/decrypt/get-user -d uuid=1cb11eb9-4802-4bfb-92a6-86d329ceebf8 | jq
+
 {
   "id": "1cb11eb9-4802-4bfb-92a6-86d329ceebf8",
   "username": "Hiroki Kaburagi",
@@ -306,8 +315,9 @@ vault write  transit/keys/springdemo/config min_decryption_version=2
 
 This make the Vault will not decrypt data with v1 key any more.
 
-```console
+```shell
 curl -G http://localhost:8080/api/v1/get-keys | jq
+
 {
   "name": [
     "springdemo"
