@@ -4,7 +4,7 @@ spring.cloud.vault:
 #      role-id:
 #      secret-id:
   token: ${VAULT_TOKEN}
-  scheme: http
+  scheme: https
   host: ${VAULT_HOST}
   port: ${VAULT_PORT}
   database:
