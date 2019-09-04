@@ -77,7 +77,7 @@ public class VaultDemoAppController {
     @RequestMapping(method = RequestMethod.POST, value = "/api/v1/encrypt/add-user")
     public Object addOneEncryptedUser(@RequestParam String username, String password, String email, String address, String creditcard)  {
         VaultTransitUtil vaultTransitUtil = new VaultTransitUtil();
-        
+
         u.setId(UUID.randomUUID().toString());
         u.setUsername(username);
         u.setPassword(vaultTransitUtil.encryptData(password));
