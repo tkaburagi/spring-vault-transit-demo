@@ -1,6 +1,5 @@
 package com.example.demo.Controller;
 
-import com.example.demo.BeanUtil;
 import com.example.demo.Entity.User;
 import com.example.demo.Repository.UserJpaRepository;
 import com.example.demo.Entity.Secrets;
